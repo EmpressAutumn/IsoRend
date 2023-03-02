@@ -40,11 +40,11 @@ def draw_grid(screen, o_x, o_y):
             draw_tile(screen, x, y, color, o_x, o_y)
 
 
-def init():
+def init(properties):
     print('Initializing IsoRend...')
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption("IsoRend " + json.load(open('properties.json'))['version'])
+    pygame.display.set_caption("IsoRend " + properties['version'])
 
     running = True
     panning = False
@@ -73,6 +73,6 @@ def init():
 
 
 if __name__ == '__main__':
-    version = json.load(open('properties.json'))['version']
-    print(f'IsoRend Engine {version} by Atom596')
-    init()
+    properties = json.load(open('properties.json', encoding='utf-8'))
+    print(f'IsoRend Engine {properties["version"]} by Atom596')
+    init(properties)
