@@ -10,8 +10,8 @@ GREY = (128, 128, 128)
 # Tile and Grid Size
 TILE_WIDTH = 64
 TILE_HEIGHT = 32
-GRID_WIDTH = 15
-GRID_HEIGHT = 15
+GRID_WIDTH = 10
+GRID_HEIGHT = 10
 
 
 # Single Tile Drawing
