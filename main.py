@@ -8,29 +8,24 @@ BLACK = (0, 0, 0)
 GREY = (128, 128, 128)
 
 # Tile and Grid Size
-TILE_WIDTH = 64
-TILE_HEIGHT = 32
-GRID_WIDTH = 10
-GRID_HEIGHT = 10
+TILE_DIM = 16
+GRID_WIDTH = 32
+GRID_HEIGHT = 32
 
 
 # Single Tile Drawing
 def draw_tile(screen, x, y, color, offset_x, offset_y):
     # calculate the position of the top left corner of the tile
-    if (x % 2) == 0:
-        tile_x = x * TILE_WIDTH / 2 + offset_x
-        tile_y = y * TILE_HEIGHT + offset_y
-    else:
-        tile_x = x * TILE_WIDTH / 2 + offset_x
-        tile_y = y * TILE_HEIGHT + offset_y + TILE_HEIGHT / 2
+    tile_x = (x - y) * TILE_DIM + offset_x
+    tile_y = (x + y) * TILE_DIM / 2 + offset_y
     # calculate the position of the center of the tile
-    center_x = tile_x + TILE_WIDTH / 2
-    center_y = tile_y + TILE_HEIGHT / 2
+    center_x = tile_x + TILE_DIM
+    center_y = tile_y + TILE_DIM / 2
     # draw the tile as a polygon
     pygame.draw.polygon(screen, color, [
         (center_x, tile_y),
-        (tile_x + TILE_WIDTH, center_y),
-        (center_x, tile_y + TILE_HEIGHT),
+        (tile_x + TILE_DIM * 2, center_y),
+        (center_x, tile_y + TILE_DIM),
         (tile_x, center_y)
     ])
 
@@ -40,7 +35,7 @@ def draw_grid(screen, o_x, o_y):
     for y in range(GRID_HEIGHT):
         for x in range(GRID_WIDTH):
             # alternate the color of the tiles
-            color = WHITE if x % 2 == 0 else GREY
+            color = WHITE if (x + y) % 2 == 0 else GREY
             draw_tile(screen, x, y, color, o_x, o_y)
 
 
