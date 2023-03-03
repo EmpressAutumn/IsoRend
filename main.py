@@ -42,12 +42,14 @@ def draw_grid(screen, o_x, o_y):
 def init(properties):
     print('Initializing IsoRend...')
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))
+    screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
     pygame.display.set_caption("IsoRend " + properties['version'])
 
     running = True
     panning = False
-    o_x, o_tx, o_y, o_ty = pygame.display.get_surface().get_size()[0] / 2, 0, 0, 0
+    o_x = pygame.display.get_surface().get_size()[0] / 2
+    o_y = (pygame.display.get_surface().get_size()[1] - TILE_DIM * GRID_WIDTH) / 2
+    o_tx, o_ty = 0, 0
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -65,6 +67,10 @@ def init(properties):
                 o_x += (event.pos[0] - o_tx)
                 o_y += (event.pos[1] - o_ty)
                 o_tx, o_ty = event.pos
+
+            elif event.type == pygame.WINDOWRESIZED:
+                o_x = pygame.display.get_surface().get_size()[0] / 2
+                o_y = (pygame.display.get_surface().get_size()[1] - TILE_DIM * GRID_WIDTH) / 2
 
         screen.fill(BLACK)
         draw_grid(screen, o_x, o_y)
