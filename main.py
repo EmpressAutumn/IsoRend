@@ -47,7 +47,7 @@ def init(properties):
 
     running = True
     panning = False
-    o_x, o_tx, o_y, o_ty = 0, 0, 0, 0
+    o_x, o_tx, o_y, o_ty = pygame.display.get_surface().get_size()[0] / 2, 0, 0, 0
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
