@@ -16,13 +16,28 @@ class Properties:  # Tile and Grid Size
 
 class Registry:  # Dynamic Tile Registry
     def __init__(self):
-        self.registrar = {}
+        self._registrar = {}
 
-    def register(self, key, item):
-        self.registrar[key].append(item)
+    def register(self, key, tile):
+        self._registrar[key].append(tile)
+
+    def get_tile(self, key):
+        return self._registrar[key]
 
 
 TILE_REGISTRY = Registry()
+
+
+def register_all():
+    print()
+
+
+class Tile:
+    def __init__(self, color=None):
+        self._color = color
+
+    def get_color(self):
+        return self._color
 
 
 def draw_tile(screen, x, y, color, offset_x, offset_y):  # Single Tile Drawing
@@ -60,6 +75,7 @@ def init(properties):
     pygame.init()
     screen = pygame.display.set_mode((properties['width'], properties["height"]), pygame.RESIZABLE)
     pygame.display.set_caption("IsoRend " + properties['version'])
+    register_all()
 
     running = True
     panning = False
