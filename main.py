@@ -8,21 +8,32 @@ BLACK = (0, 0, 0)
 GREY = (128, 128, 128)
 
 
-class Properties:
-    # Tile and Grid Size
+class Properties:  # Tile and Grid Size
     TILE_DIM = 16
     GRID_WIDTH = 32
     GRID_HEIGHT = 32
 
 
-# Single Tile Drawing
-def draw_tile(screen, x, y, color, offset_x, offset_y):
+class Registry:  # Dynamic Tile Registry
+    def __init__(self):
+        self.registrar = {}
+
+    def register(self, key, item):
+        self.registrar[key].append(item)
+
+
+TILE_REGISTRY = Registry()
+
+
+def draw_tile(screen, x, y, color, offset_x, offset_y):  # Single Tile Drawing
     # calculate the position of the top left corner of the tile
     tile_x = (x - y) * Properties.TILE_DIM + offset_x
     tile_y = (x + y) * Properties.TILE_DIM / 2 + offset_y
+
     # calculate the position of the center of the tile
     center_x = tile_x + Properties.TILE_DIM
     center_y = tile_y + Properties.TILE_DIM / 2
+
     # draw the tile as a polygon
     pygame.draw.polygon(screen, color, [
         (center_x, tile_y),
@@ -32,8 +43,7 @@ def draw_tile(screen, x, y, color, offset_x, offset_y):
     ])
 
 
-# Grid Drawing
-def draw_grid(screen, o_x, o_y):
+def draw_grid(screen, o_x, o_y):  # Grid Drawing
     for y in range(Properties.GRID_HEIGHT):
         for x in range(Properties.GRID_WIDTH):
             # alternate the color of the tiles
