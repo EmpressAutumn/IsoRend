@@ -48,7 +48,7 @@ def draw_gui(screen):
 def init(properties):
     print('Initializing IsoRend...')
     pygame.init()
-    screen = pygame.display.set_mode((800, 600), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((properties['width'], properties["height"]), pygame.RESIZABLE)
     pygame.display.set_caption("IsoRend " + properties['version'])
 
     running = True
