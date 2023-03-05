@@ -6,12 +6,14 @@ import pygame
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREY = (128, 128, 128)
+RED = (255, 0, 0)
 
 
 class Properties:  # Tile and Grid Size
+    TILE_MAP = json.load(open("0_0.json"))
     TILE_DIM = 16
-    GRID_WIDTH = 32
-    GRID_HEIGHT = 32
+    GRID_WIDTH = len(TILE_MAP[0])
+    GRID_HEIGHT = len(TILE_MAP)
 
 
 class Registry:  # Dynamic Tile Registry
@@ -19,7 +21,7 @@ class Registry:  # Dynamic Tile Registry
         self._registrar = {}
 
     def register(self, key, tile):
-        self._registrar[key].append(tile)
+        self._registrar.update({key: tile})
 
     def get_tile(self, key):
         return self._registrar[key]
@@ -29,18 +31,20 @@ TILE_REGISTRY = Registry()
 
 
 def register_all():
-    print()
+    TILE_REGISTRY.register("0", Tile())
+    TILE_REGISTRY.register("red", Tile(RED))
 
 
 class Tile:
-    def __init__(self, color=None):
+    def __init__(self, color=None, image=None):
         self._color = color
+        self._image = image
 
     def get_color(self):
         return self._color
 
 
-def draw_tile(screen, x, y, color, offset_x, offset_y):  # Single Tile Drawing
+def draw_tile(screen, x, y, offset_x, offset_y, tile):  # Single Tile Drawing
     # calculate the position of the top left corner of the tile
     tile_x = (x - y) * Properties.TILE_DIM + offset_x
     tile_y = (x + y) * Properties.TILE_DIM / 2 + offset_y
@@ -48,6 +52,11 @@ def draw_tile(screen, x, y, color, offset_x, offset_y):  # Single Tile Drawing
     # calculate the position of the center of the tile
     center_x = tile_x + Properties.TILE_DIM
     center_y = tile_y + Properties.TILE_DIM / 2
+
+    # alternate the color of the tiles if they don't have
+    color = tile.get_color()
+    if color is None:
+        color = WHITE if (x + y) % 2 == 0 else GREY
 
     # draw the tile as a polygon
     pygame.draw.polygon(screen, color, [
@@ -61,9 +70,7 @@ def draw_tile(screen, x, y, color, offset_x, offset_y):  # Single Tile Drawing
 def draw_grid(screen, o_x, o_y):  # Grid Drawing
     for y in range(Properties.GRID_HEIGHT):
         for x in range(Properties.GRID_WIDTH):
-            # alternate the color of the tiles
-            color = WHITE if (x + y) % 2 == 0 else GREY
-            draw_tile(screen, x, y, color, o_x, o_y)
+            draw_tile(screen, x, y, o_x, o_y, TILE_REGISTRY.get_tile(Properties.TILE_MAP[y][x]))
 
 
 def draw_gui(screen):
