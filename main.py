@@ -1,3 +1,4 @@
+import copy
 import json
 import pygame
 from tiles import red
@@ -6,13 +7,6 @@ from tiles import red
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREY = (128, 128, 128)
-
-
-class Properties:  # Tile and Grid Size
-    TILE_MAP = json.load(open("0_0.json"))
-    TILE_DIM = 16
-    GRID_WIDTH = len(TILE_MAP[0])
-    GRID_HEIGHT = len(TILE_MAP)
 
 
 class Registry:  # Dynamic Tile Registry
@@ -32,6 +26,22 @@ TILE_REGISTRY = Registry()
 def register_all():
     TILE_REGISTRY.register("0", Tile())
     TILE_REGISTRY.register("red", red.RedBlue())
+
+
+class Properties:  # Tile and Grid Size
+    TILE_MAP = []
+    TILE_DIM = 16
+    GRID_WIDTH = 0
+    GRID_HEIGHT = 0
+
+
+def load_map():
+    for y in range(len(json.load(open("0_0.json")))):
+        Properties.TILE_MAP.append([])
+        for x in range(len(json.load(open("0_0.json"))[0])):
+            Properties.TILE_MAP[y].append(copy.copy(TILE_REGISTRY.get_tile(json.load(open("0_0.json"))[y][x])))
+    Properties.GRID_WIDTH = len(Properties.TILE_MAP[0])
+    Properties.GRID_HEIGHT = len(Properties.TILE_MAP)
 
 
 class Tile:
@@ -72,7 +82,7 @@ def draw_tile(screen, x, y, offset_x, offset_y, tile):  # Single Tile Drawing
 def draw_grid(screen, o_x, o_y):  # Grid Drawing
     for y in range(Properties.GRID_HEIGHT):
         for x in range(Properties.GRID_WIDTH):
-            draw_tile(screen, x, y, o_x, o_y, TILE_REGISTRY.get_tile(Properties.TILE_MAP[y][x]))
+            draw_tile(screen, x, y, o_x, o_y, Properties.TILE_MAP[y][x])
 
 
 def draw_gui(screen):
@@ -85,6 +95,7 @@ def init(properties):
     screen = pygame.display.set_mode((properties['width'], properties["height"]), pygame.RESIZABLE)
     pygame.display.set_caption("IsoRend " + properties['version'])
     register_all()
+    load_map()
 
     running = True
     panning = False
@@ -92,11 +103,6 @@ def init(properties):
     o_x = w / 2
     o_y = (h - Properties.TILE_DIM * Properties.GRID_WIDTH) / 2
     o_tx, o_ty = 0, 0
-    tiles = []
-    for y in range(Properties.GRID_HEIGHT):
-        tiles.append([])
-        for x in range(Properties.GRID_WIDTH):
-            tiles[y].append(TILE_REGISTRY.get_tile(Properties.TILE_MAP[y][x]))
 
     while running:
         for event in pygame.event.get():
@@ -123,7 +129,7 @@ def init(properties):
                 t_x = int(t_x - 0.5)
                 t_y = int(t_y - 0.5)
                 if 0 <= t_x < Properties.GRID_WIDTH and 0 <= t_y < Properties.GRID_HEIGHT:
-                    tiles[t_y][t_x].click()
+                    Properties.TILE_MAP[t_y][t_x].click()
 
             elif event.type == pygame.MOUSEWHEEL:
                 Properties.TILE_DIM += event.y * 2
@@ -136,11 +142,13 @@ def init(properties):
                 o_y = (nh - Properties.TILE_DIM * Properties.GRID_WIDTH) / 2
                 # o_y = nh - (o_y + TILE_DIM * GRID_WIDTH / 2) * nh / h
                 w, h = nw, nh
-
-        screen.fill(BLACK)
-        draw_grid(screen, o_x, o_y)
-        draw_gui(screen)
-        pygame.display.update()
+        try:
+            screen.fill(BLACK)
+            draw_grid(screen, o_x, o_y)
+            draw_gui(screen)
+            pygame.display.update()
+        except pygame.error:
+            break
 
 
 if __name__ == '__main__':
