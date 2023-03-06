@@ -8,7 +8,6 @@ class RedBlue(Tile):
         super().__init__(c.BLUE)
 
     def click(self):
-        print("Clicked on a RedBlue tile")
         self._clicked = not self._clicked
         if self._clicked:
             self._color = c.RED
