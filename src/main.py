@@ -2,7 +2,7 @@ import copy
 import json
 import pygame
 from properties import Properties as Pr
-from registry import registries
+from registry import registries as r
 from img import colors as c
 from tiles import tile
 
@@ -12,7 +12,7 @@ def load_map():
         Pr.TILE_MAP.append([])
         for x in range(len(json.load(open("maps/0_0.json"))[0])):
             Pr.TILE_MAP[y].append(copy.copy(
-                registries.TILE_REGISTRY.get_tile(json.load(open("maps/0_0.json"))[y][x])))
+                r.TILE_REGISTRY.get_tile(json.load(open("maps/0_0.json"))[y][x])))
     Pr.GRID_WIDTH = len(Pr.TILE_MAP[0])
     Pr.GRID_HEIGHT = len(Pr.TILE_MAP)
 
@@ -26,7 +26,7 @@ def init_gameloop(properties):
     pygame.init()
     screen = pygame.display.set_mode((properties['width'], properties["height"]), pygame.RESIZABLE)
     pygame.display.set_caption("IsoRend " + properties['version'])
-    registries.register_all()
+    r.register_all()
     load_map()
 
     panning = False
