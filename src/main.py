@@ -2,7 +2,7 @@ import json
 import pygame
 from properties import Properties as Pr
 from registry import registries as r
-from img import colors as c
+from graphics import colors as c
 from tiles import tile
 
 

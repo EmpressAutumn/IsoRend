@@ -1,5 +1,5 @@
 import pygame
-from src.img import colors as c
+from src.graphics import colors as c
 
 
 class Tile:
@@ -9,6 +9,9 @@ class Tile:
 
     def get_color(self):
         return self._color
+
+    def get_image(self):
+        return self._image
 
     def click(self):
         pass
@@ -37,7 +40,22 @@ def draw_tile(screen, pr, x, y, offset_x, offset_y, tile):  # Single Tile Drawin
     ])
 
 
+def draw_image(screen, pr, x, y, offset_x, offset_y, tile):  # Image Drawing
+    tile_x = (x - y) * pr.tile_dim + offset_x
+    tile_y = (x + y) * pr.tile_dim / 2 + offset_y
+
+    try:
+        img = pygame.image.load(tile.get_image()).convert()
+        screen.blit(pygame.transform.scale(img, (pr.tile_dim, pr.tile_dim)), (tile_x + pr.tile_dim / 2, tile_y - pr.tile_dim / 4))
+    except TypeError:
+        pass
+
+
 def draw_grid(screen, pr, o_x, o_y):  # Grid Drawing
     for y in range(pr.grid_height):
         for x in range(pr.grid_width):
             draw_tile(screen, pr, x, y, o_x, o_y, pr.tile_map[y][x])
+
+    for y in range(pr.grid_height):
+        for x in range(pr.grid_width):
+            draw_image(screen, pr, x, y, o_x, o_y, pr.tile_map[y][x])

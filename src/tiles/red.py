@@ -1,5 +1,5 @@
 from src.tiles.tile import Tile
-from src.img import colors as c
+from src.graphics import colors as c
 
 
 class RedBlue(Tile):
