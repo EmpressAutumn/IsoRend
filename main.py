@@ -1,12 +1,11 @@
 import json
 import pygame
-
+from tiles import red
 
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREY = (128, 128, 128)
-RED = (255, 0, 0)
 
 
 class Properties:  # Tile and Grid Size
@@ -32,7 +31,7 @@ TILE_REGISTRY = Registry()
 
 def register_all():
     TILE_REGISTRY.register("0", Tile())
-    TILE_REGISTRY.register("red", Tile(RED))
+    TILE_REGISTRY.register("red", red.RedBlue())
 
 
 class Tile:
@@ -42,6 +41,9 @@ class Tile:
 
     def get_color(self):
         return self._color
+
+    def click(self):
+        pass
 
 
 def draw_tile(screen, x, y, offset_x, offset_y, tile):  # Single Tile Drawing
@@ -74,7 +76,7 @@ def draw_grid(screen, o_x, o_y):  # Grid Drawing
 
 
 def draw_gui(screen):
-    print("Not yet implemented")
+    pass
 
 
 def init(properties):
@@ -90,6 +92,12 @@ def init(properties):
     o_x = w / 2
     o_y = (h - Properties.TILE_DIM * Properties.GRID_WIDTH) / 2
     o_tx, o_ty = 0, 0
+    tiles = []
+    for y in range(Properties.GRID_HEIGHT):
+        tiles.append([])
+        for x in range(Properties.GRID_WIDTH):
+            tiles[y].append(TILE_REGISTRY.get_tile(Properties.TILE_MAP[y][x]))
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -108,6 +116,15 @@ def init(properties):
                 o_y += (event.pos[1] - o_ty)
                 o_tx, o_ty = event.pos
 
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # Left Click
+                pos_x, pos_y = pygame.mouse.get_pos()
+                t_x = (pos_x - o_x) / (2 * Properties.TILE_DIM) + (pos_y - o_y) / Properties.TILE_DIM
+                t_y = t_x - (pos_x - o_x) / Properties.TILE_DIM + 1
+                t_x = int(t_x - 0.5)
+                t_y = int(t_y - 0.5)
+                if 0 <= t_x < Properties.GRID_WIDTH and 0 <= t_y < Properties.GRID_HEIGHT:
+                    tiles[t_y][t_x].click()
+
             elif event.type == pygame.MOUSEWHEEL:
                 Properties.TILE_DIM += event.y * 2
                 if Properties.TILE_DIM <= 2:
@@ -122,7 +139,7 @@ def init(properties):
 
         screen.fill(BLACK)
         draw_grid(screen, o_x, o_y)
-        # draw_gui(screen)
+        draw_gui(screen)
         pygame.display.update()
 
 
